@@ -1,59 +1,63 @@
 import React from 'react';
 import { render } from 'react-dom';
-//CSS
+//css
 import './style/css/bootstrap.min.css';
 import './index.css';
-
-import { sampleText } from './sampleText';
-import marked from 'marked';
+//js
+import { sampleText } from './sampleText.js';
+//marked
+import marked  from 'marked';
 
 class App extends React.Component{
 
 	state = {
-		text: sampleText
-	};
+		text : sampleText
+	}
 
-	componentWillMount(){
+	componentWillMount = () => {
 		const localStorageText = localStorage.getItem('text');
 		if(localStorageText){
-			this.setState({text:localStorageText});
+			this.setState({text : localStorageText});
 		}
 	}
 
-	componentWillUpdate(nextprops, nextState){
+	componentWillUpdate = (nextProps, nextState) => {
 		localStorage.setItem('text', nextState.text);
 	}
 
-	editText = function(event){
-		const text = event.target.value;
-		this.setState({text});
+	editText = (event) =>{
+		this.setState({text : event.target.value})
 	}
 
-	renderText = function(text){
-		const renderText = marked(text, {sanitize : true});
-		return {__html: renderText};
+	markedText = () =>{
+		const text = marked(this.state.text, {sanitize : true});
+		return {__html: text}
 	}
 
 	render(){
-		return (
+
+		return(
 			<div className="container">
 				<div className="row">
 					<div className="col-sm-6">
-						<textarea rows="35" className="form-control" value={this.state.text} onChange={(e) => this.editText(e)}>
-						
+						<textarea 
+							value={this.state.text} 
+							rows="35" 
+							className="form-control"
+							onChange={(e) => this.editText(e)}>
 						</textarea>
 					</div>
 					<div className="col-sm-6">
-						<div dangerouslySetInnerHTML={this.renderText(this.state.text)}/>
+						<div>
+							<div dangerouslySetInnerHTML={this.markedText()}></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		)
-	}
+	};
 }
 
 render(
-	<App />,
-	document.getElementById('root')
+	<App />,document.querySelector('#root')
 );
-
